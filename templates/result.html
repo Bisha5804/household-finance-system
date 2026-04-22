@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Result — Household Finance Advisor</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+        :root {
+            --navy:    #0f2744;
+            --teal:    #0d9488;
+            --teal-l:  #14b8a6;
+            --teal-xl: #5eead4;
+            --white:   #ffffff;
+            --ink:     #1e293b;
+            --slate:   #64748b;
+            --border:  #e2e8f0;
+            --bg:      #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger:  #ef4444;
+            --radius:  14px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,.07);
+            --shadow-md: 0 8px 32px rgba(0,0,0,.10);
+        }
+ 
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--ink);
+        }
+ 
+        /* ── Top bar ── */
+        .top-bar {
+            background: var(--navy);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(15,39,68,.35);
+        }
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 18px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .logo span { color: var(--teal-xl); }
+        .step-tag {
+            font-size: 11.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: rgba(255,255,255,.4);
+        }
+ 
+        /* Full progress */
+        .progress-wrap { height: 3px; background: #1e3a5f; }
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--teal-l));
+        }
+ 
+        /* ── Page ── */
+        .page {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 40px 20px 70px;
+        }
+ 
+        /* ── Page heading ── */
+        .page-heading {
+            margin-bottom: 28px;
+            animation: slideUp .4s ease both;
+        }
+        .page-heading h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 26px;
+            color: var(--navy);
+            letter-spacing: -.02em;
+            margin-bottom: 5px;
+        }
+        .page-heading p { font-size: 14px; color: var(--slate); }
+ 
+        @keyframes slideUp {
+            from { opacity:0; transform:translateY(14px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+ 
+        /* ── Risk hero banner ── */
+        .risk-banner {
+            border-radius: 20px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            animation: slideUp .4s .05s ease both;
+        }
+        .risk-banner.safe     { background:linear-gradient(135deg,#d1fae5,#a7f3d0); border:1px solid #6ee7b7; }
+        .risk-banner.moderate { background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #fcd34d; }
+        .risk-banner.risky    { background:linear-gradient(135deg,#fee2e2,#fecaca); border:1px solid #fca5a5; }
+ 
+        .risk-left h3 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            margin-bottom: 6px;
+        }
+        .risk-banner.safe     .risk-left h3 { color: #065f46; }
+        .risk-banner.moderate .risk-left h3 { color: #92400e; }
+        .risk-banner.risky    .risk-left h3 { color: #991b1b; }
+ 
+        .risk-level-text {
+            font-family: 'DM Serif Display', serif;
+            font-size: 36px;
+            letter-spacing: -.02em;
+        }
+        .risk-banner.safe     .risk-level-text { color: #065f46; }
+        .risk-banner.moderate .risk-level-text { color: #92400e; }
+        .risk-banner.risky    .risk-level-text { color: #991b1b; }
+ 
+        .risk-desc { font-size: 13.5px; margin-top: 4px; }
+        .risk-banner.safe     .risk-desc { color: #047857; }
+        .risk-banner.moderate .risk-desc { color: #b45309; }
+        .risk-banner.risky    .risk-desc { color: #b91c1c; }
+ 
+        .risk-emoji { font-size: 64px; line-height: 1; flex-shrink: 0; }
+ 
+        /* ── Stats grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+            animation: slideUp .4s .1s ease both;
+        }
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
+        .stat-card.income-card  { border-top: 3px solid #3b82f6; }
+        .stat-card.expense-card { border-top: 3px solid var(--danger); }
+        .stat-card.savings-card { border-top: 3px solid var(--success); }
+        .stat-card.percent-card { border-top: 3px solid var(--warning); }
+ 
+        .stat-icon { font-size: 22px; margin-bottom: 8px; display: block; }
+        .stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 22px;
+            color: var(--navy);
+            display: block;
+            line-height: 1.15;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: var(--slate);
+            font-weight: 600;
+        }
+ 
+        /* ── Two-column row ── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+            animation: slideUp .4s .15s ease both;
+        }
+ 
+        /* ── White card ── */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 26px 28px;
+            box-shadow: var(--shadow-sm);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+ 
+        /* ── Chart image ── */
+        .chart-img {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+ 
+        /* ── Suggestions ── */
+        .suggestions-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 26px 28px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            animation: slideUp .4s .2s ease both;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+            animation: slideUp .35s ease both;
+        }
+        .suggestion-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .suggestion-item:nth-child(1){ animation-delay:.22s }
+        .suggestion-item:nth-child(2){ animation-delay:.27s }
+        .suggestion-item:nth-child(3){ animation-delay:.32s }
+        .suggestion-item:nth-child(4){ animation-delay:.37s }
+        .suggestion-item:nth-child(5){ animation-delay:.42s }
+ 
+        .s-icon {
+            width: 34px; height: 34px;
+            background: linear-gradient(135deg,#fef9c3,#fde68a);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .s-text {
+            font-size: 14px;
+            color: var(--ink);
+            line-height: 1.55;
+            padding-top: 6px;
+        }
+ 
+        /* ── Health score bar ── */
+        .score-wrap { margin-top: 4px; }
+        .score-bar-bg {
+            height: 8px;
+            background: var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 10px 0 6px;
+        }
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 1s ease;
+        }
+        .score-bar-fill.safe     { background: linear-gradient(90deg,#10b981,#34d399); }
+        .score-bar-fill.moderate { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+        .score-bar-fill.risky    { background: linear-gradient(90deg,#ef4444,#f87171); }
+ 
+        .score-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            color: var(--slate);
+            letter-spacing: .04em;
+        }
+ 
+        /* Savings breakdown rows */
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .breakdown-row:last-child { border-bottom: none; }
+        .breakdown-label { color: var(--slate); display: flex; align-items: center; gap: 7px; }
+        .breakdown-value { font-weight: 600; color: var(--navy); }
+        .breakdown-value.green { color: var(--success); }
+        .breakdown-value.red   { color: var(--danger); }
+ 
+        /* ── Action buttons ── */
+        .actions {
+            display: flex;
+            gap: 14px;
+            animation: slideUp .4s .3s ease both;
+        }
+        .btn-restart {
+            flex: 1;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, var(--teal), #0891b2);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            box-shadow: 0 6px 22px rgba(13,148,136,.38);
+            transition: transform .2s, box-shadow .2s, filter .2s;
+        }
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(13,148,136,.5);
+            filter: brightness(1.07);
+        }
+        .btn-print {
+            flex: 1;
+            padding: 14px 20px;
+            background: var(--white);
+            color: var(--navy);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            box-shadow: var(--shadow-sm);
+            transition: transform .2s, border-color .2s, color .2s;
+        }
+        .btn-print:hover {
+            transform: translateY(-2px);
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+ 
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .two-col    { grid-template-columns: 1fr; }
+            .actions    { flex-direction: column; }
+            .risk-banner { flex-direction: column; text-align: center; }
+            .top-bar { padding: 12px 16px; }
+            .stat-num { font-size: 18px; }
+        }
+ 
+        @media print {
+            .top-bar, .actions { display: none; }
+            body { background: white; }
+            .card, .stat-card, .suggestions-card, .risk-banner { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+ 
+    <!-- Top bar -->
+    <div class="top-bar">
+        <div class="logo">🏠 <span>Finance</span>Advisor</div>
+        <div class="step-tag">Step 4 of 4 — Your Results</div>
+    </div>
+    <div class="progress-wrap">
+        <div class="progress-fill"></div>
+    </div>
+ 
+    <div class="page">
+ 
+        <!-- Page heading -->
+        <div class="page-heading">
+            <h2>📊 Financial Analysis Report</h2>
+            <p>Here is a complete breakdown of your household's financial health.</p>
+        </div>
+ 
+        <!-- Risk hero banner -->
+        <div class="risk-banner {{ risk|lower }}">
+            <div class="risk-left">
+                <h3>Your Risk Level</h3>
+                <div class="risk-level-text">{{ risk }}</div>
+                <div class="risk-desc">
+                    {% if risk|lower == 'safe' %}
+                        Great job! Your finances are well managed. Keep saving!
+                    {% elif risk|lower == 'moderate' %}
+                        You're doing okay, but there's room to improve your savings.
+                    {% else %}
+                        Your spending is high. Review the suggestions below carefully.
+                    {% endif %}
+                </div>
+            </div>
+            <div class="risk-emoji">
+                {% if risk|lower == 'safe' %}✅
+                {% elif risk|lower == 'moderate' %}⚠️
+                {% else %}🔴{% endif %}
+            </div>
+        </div>
+ 
+        <!-- Stats grid -->
+        <div class="stats-grid">
+            <div class="stat-card income-card">
+                <span class="stat-icon">💰</span>
+                <span class="stat-num">₹{{ income }}</span>
+                <span class="stat-label">Total Income</span>
+            </div>
+            <div class="stat-card expense-card">
+                <span class="stat-icon">💸</span>
+                <span class="stat-num">₹{{ expense }}</span>
+                <span class="stat-label">Total Expense</span>
+            </div>
+            <div class="stat-card savings-card">
+                <span class="stat-icon">🏦</span>
+                <span class="stat-num">₹{{ savings }}</span>
+                <span class="stat-label">Net Savings</span>
+            </div>
+            <div class="stat-card percent-card">
+                <span class="stat-icon">📈</span>
+                <span class="stat-num">{{ percent }}%</span>
+                <span class="stat-label">Savings Rate</span>
+            </div>
+        </div>
+ 
+        <!-- Chart + Breakdown two-column -->
+        <div class="two-col">
+ 
+            <!-- Expense chart -->
+            <div class="card">
+                <div class="card-title">🥧 Expense Distribution</div>
+                <img class="chart-img"
+                     src="{{ url_for('static', filename='graph.png') }}"
+                     alt="Expense Chart">
+            </div>
+ 
+            <!-- Financial breakdown + health score -->
+            <div class="card">
+                <div class="card-title">📋 Financial Breakdown</div>
+ 
+                <div class="breakdown-row">
+                    <span class="breakdown-label">💰 Total Income</span>
+                    <span class="breakdown-value green">₹{{ income }}</span>
+                </div>
+                <div class="breakdown-row">
+                    <span class="breakdown-label">💸 Total Expense</span>
+                    <span class="breakdown-value red">₹{{ expense }}</span>
+                </div>
+                <div class="breakdown-row">
+                    <span class="breakdown-label">🏦 Net Savings</span>
+                    <span class="breakdown-value">₹{{ savings }}</span>
+                </div>
+                <div class="breakdown-row">
+                    <span class="breakdown-label">📈 Savings Rate</span>
+                    <span class="breakdown-value">{{ percent }}%</span>
+                </div>
+ 
+                <!-- Health score bar -->
+                <div class="score-wrap" style="margin-top:18px;">
+                    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px;">
+                        Financial Health Score
+                    </div>
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill {{ risk|lower }}"
+                             style="width: {{ [percent, 100]|min }}%"></div>
+                    </div>
+                    <div class="score-labels">
+                        <span>Risky</span>
+                        <span>Moderate</span>
+                        <span>Safe</span>
+                    </div>
+                </div>
+            </div>
+ 
+        </div>
+ 
+        <!-- Suggestions -->
+        <div class="suggestions-card">
+            <div class="card-title">💡 Personalised Suggestions</div>
+            {% for s in suggestions %}
+            <div class="suggestion-item">
+                <div class="s-icon">💡</div>
+                <div class="s-text">{{ s }}</div>
+            </div>
+            {% endfor %}
+        </div>
+ 
+        <!-- Action buttons -->
+        <div class="actions">
+            <a href="/" class="btn-restart">
+                🔄 Start New Analysis
+            </a>
+            <button onclick="window.print()" class="btn-print">
+                🖨️ Print / Save Report
+            </button>
+        </div>
+ 
+    </div>
+ 
+</body>
+</html>
+ 

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expenses</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #43e97b, #38f9d7);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 60%;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .card {
+            background: #f5f7ff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 90%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            background: #43e97b;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2ecc71;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>💸 Enter Your Monthly Expenses</h2>
+
+    <form action="/result" method="post">
+
+        <input type="hidden" name="total_income" value="{{ total_income }}">
+
+        <div class="grid">
+
+            <div class="card">🛒 Grocery<br><input type="number" name="grocery"></div>
+            <div class="card">🎓 Education<br><input type="number" name="education"></div>
+            <div class="card">💡 Electricity<br><input type="number" name="electricity"></div>
+            <div class="card">🔥 Gas<br><input type="number" name="gas"></div>
+            <div class="card">🏥 Medical<br><input type="number" name="medical"></div>
+            <div class="card">🏠 Rent<br><input type="number" name="rent"></div>
+            <div class="card">📱 Mobile<br><input type="number" name="mobile"></div>
+            <div class="card">📺 TV Recharge<br><input type="number" name="tv"></div>
+            <div class="card">🧾 Other<br><input type="number" name="other"></div>
+
+        </div>
+
+        <button type="submit">📊 Analyze</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
