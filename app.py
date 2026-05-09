@@ -5,8 +5,6 @@ import os
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 
-
-
 app = Flask(__name__)
 
 # DB Connection
@@ -65,24 +63,40 @@ def classify_risk(savings_percent):
         return "Risky"
 
 
-def generate_suggestions(grocery, mobile, other):
+def generate_suggestions(grocery, mobile, other, rent, electricity, savings_percent, total_income):
     suggestions = []
 
-    if grocery > 5000:
-        suggestions.append("Reduce grocery expenses")
+    # More realistic thresholds
+    if grocery > 0.2 * total_income:
+        suggestions.append("Try reducing grocery expenses")
 
-    if mobile > 1000:
-        suggestions.append("Choose a cheaper mobile plan")
+    if mobile > 800:
+        suggestions.append("Consider switching to a cheaper mobile plan")
 
-    if other > 3000:
+    if other > 2000:
         suggestions.append("Control unnecessary expenses")
 
+    if rent > 0.35 * total_income:
+        suggestions.append("Rent is quite high, consider cost optimization")
+
+    if electricity > 1500:
+        suggestions.append("Try to reduce electricity usage")
+
+    # Savings-based suggestions
+    if savings_percent < 0:
+        suggestions.append("You are overspending! Expenses exceed income")
+
+    elif savings_percent < 10:
+        suggestions.append("Your savings are low. Try reducing expenses")
+
+    elif savings_percent < 20:
+        suggestions.append("Savings are moderate. You can improve")
+
+    # Default case
     if len(suggestions) == 0:
         suggestions.append("Your spending is well managed!")
 
     return suggestions
-
-
 def train_model():
     # sample training data
     X = np.array([[10], [15], [25], [30], [5], [8]])
@@ -101,15 +115,15 @@ model = train_model()
 def result():
     total_income = float(request.form['total_income'])
 
-    grocery = float(request.form['grocery'])
-    education = float(request.form['education'])
-    electricity = float(request.form['electricity'])
-    gas = float(request.form['gas'])
-    medical = float(request.form['medical'])
-    rent = float(request.form['rent'])
-    mobile = float(request.form['mobile'])
-    tv = float(request.form['tv'])
-    other = float(request.form['other'])
+    grocery = float(request.form.get('grocery') or 0)
+    education = float(request.form.get('education') or 0)
+    electricity = float(request.form.get('electricity') or 0)
+    gas = float(request.form.get('gas') or 0)
+    medical = float(request.form.get('medical') or 0)
+    rent = float(request.form.get('rent') or 0)
+    mobile = float(request.form.get('mobile') or 0)
+    tv = float(request.form.get('tv') or 0)
+    other = float(request.form.get('other') or 0)
 
     total_expense = (grocery + education + electricity + gas +
                      medical + rent + mobile + tv + other)
@@ -128,7 +142,7 @@ def result():
         risk = "Safe"
 
     # ✅ Suggestions
-    suggestions = generate_suggestions(grocery, mobile, other)
+    suggestions = generate_suggestions(grocery, mobile, rent, electricity,savings_percent, total_income,other)
 
     # ✅ GRAPH CODE (PUT HERE 🔥)
     categories = ['Grocery', 'Education', 'Electricity', 'Gas', 'Medical', 'Rent', 'Mobile', 'TV', 'Other']
@@ -164,6 +178,18 @@ def result():
     graph_path = os.path.join(base_dir, 'static', 'graph.png')
     plt.savefig(graph_path)
     plt.close()
+
+    query = """
+    INSERT INTO expenses 
+    (grocery, education, electricity, gas, medical, rent, mobile, tv, other, total_income, total_expense, savings, savings_percent, risk)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+
+    values = (grocery, education, electricity, gas, medical, rent, mobile, tv, other,
+          total_income, total_expense, savings, savings_percent, risk)
+
+    cursor.execute(query, values)
+    conn.commit()
 
     # ✅ Return result
     return render_template('result.html',
